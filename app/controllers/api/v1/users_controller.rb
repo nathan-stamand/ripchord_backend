@@ -5,7 +5,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def login
-    byebug
+    
   end
 
   def logout
@@ -13,8 +13,14 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def create
-    user = User.create(user_params)
-    render json: UserSerializer.new(user)
+    user = User.find_by(username: params[:user][:username])
+    if user
+      render json: {message: "User already exists, please choose different username and try again!"}
+    else
+      user = User.create(user_params)
+      session[:user_id] = user.id
+      render json: UserSerializer.new(user)
+    end
   end
 
   def show
