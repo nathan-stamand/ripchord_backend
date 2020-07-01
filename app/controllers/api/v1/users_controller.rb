@@ -4,6 +4,14 @@ class Api::V1::UsersController < ApplicationController
     render json: UserSerializer.new(users)
   end
 
+  def login
+    byebug
+  end
+
+  def logout
+    render plain: "logout!"
+  end
+
   def create
     user = User.create(user_params)
     render json: UserSerializer.new(user)
@@ -17,6 +25,6 @@ class Api::V1::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :password, :password_digest)
+    params.require(:user).permit(:username, :password)
   end
 end
