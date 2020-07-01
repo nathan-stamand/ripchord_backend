@@ -6,11 +6,13 @@ class Api::V1::UsersController < ApplicationController
 
   def login
     user = User.find_by(username: params[:user][:username])
-    if user.authenticate(params[:user][:password])
+    if !user
+      render json: {message: "User Not Found"}
+    elsif user.authenticate(params[:user][:password])
       session[:user_id] = user.id
       render json: UserSerializer.new(user)
     else
-      render json: {message: "User Not Found"}
+      render json: {message: "Password incorrect. Make sure your username and password are correct."}
     end
   end
 
@@ -24,8 +26,12 @@ class Api::V1::UsersController < ApplicationController
       render json: {message: "User already exists, please choose different username and try again!"}
     else
       user = User.create(user_params)
-      session[:user_id] = user.id
-      render json: UserSerializer.new(user)
+      if user.save
+        session[:user_id] = user.id
+        render json: UserSerializer.new(user)
+      else
+        render json: {message: "Error creating user. Be sure your username and password are not blank."}
+      end
     end
   end
 
