@@ -5,7 +5,13 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def login
-    
+    user = User.find_by(username: params[:user][:username])
+    if user.authenticate(params[:user][:password])
+      session[:user_id] = user.id
+      render json: UserSerializer.new(user)
+    else
+      render json: {message: "User Not Found"}
+    end
   end
 
   def logout
