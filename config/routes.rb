@@ -7,7 +7,9 @@ Rails.application.routes.draw do
       post "/users/logout", to: "users#logout"
       post "/users", to: "users#create"
       post "/users/:id", to: "users#show"
-      resources :songs
+      resources :users, only: [:index, :show] do
+        resources :songs
+      end
     end
   end
 end
