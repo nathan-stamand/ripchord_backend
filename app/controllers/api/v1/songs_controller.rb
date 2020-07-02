@@ -1,6 +1,6 @@
 class Api::V1::SongsController < ApplicationController
   def index
-    if user = User.find_by(id: params[:user_id])
+    if user = current_user
       songs = user.songs
     else
       songs = Song.all
