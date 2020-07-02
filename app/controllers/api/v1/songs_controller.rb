@@ -1,6 +1,6 @@
 class Api::V1::SongsController < ApplicationController
   def index
-    if user = current_user
+    if user = User.find_by(id: params[:user_id])
       songs = user.songs
     else
       songs = Song.all
@@ -9,7 +9,8 @@ class Api::V1::SongsController < ApplicationController
   end
 
   def create
-    song = Song.create(song_params)
+    user = User.find_by(id: params[:user_id])
+    song = user.songs.create(song_params)
     render json: SongSerializer.new(song)
   end
 
