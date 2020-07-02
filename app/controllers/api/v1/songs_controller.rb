@@ -1,6 +1,6 @@
 class Api::V1::SongsController < ApplicationController
   def index
-    if user = User.find_by(id: params[:user_id])
+    if set_user
       songs = user.songs
     else
       songs = Song.all
@@ -9,9 +9,12 @@ class Api::V1::SongsController < ApplicationController
   end
 
   def create
-    user = User.find_by(id: params[:user_id])
-    song = user.songs.create(song_params)
-    render json: SongSerializer.new(song)
+    if set_user
+      song = user.songs.create(song_params)
+      render json: SongSerializer.new(song)
+    else
+      render json: {message: "Must be logged in to create songs!"}
+    end
   end
 
   def show
@@ -35,5 +38,9 @@ class Api::V1::SongsController < ApplicationController
 
   def song_params
     params.require(:song).permit(:title, :chords, :user_id)
+  end
+
+  def set_user
+    user = User.find_by(id: params[:user_id])
   end
 end
